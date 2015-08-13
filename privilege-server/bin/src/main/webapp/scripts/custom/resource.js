@@ -114,7 +114,7 @@ var FormCl = function () {
 
         if ($('.wysihtml5').size() > 0) {
             $('.wysihtml5').wysihtml5({
-                "stylesheets": ["http://127.0.0.1/privilege_inc/assets/plugins/bootstrap-wysihtml5/wysiwyg-color.css"]
+                "stylesheets": ["http://dmc-124.sts/privilege_inc/assets/plugins/bootstrap-wysihtml5/wysiwyg-color.css"]
             });
         }
     }
@@ -147,6 +147,10 @@ var Resource = function(){
 				$("#name").blur();
 				$("#url").attr("value",node.url);
 				$("#url").blur();
+				$("#permission").attr("value",node.permission);
+				$("#permission").blur();
+				$("#type").attr("value",node.type);
+				$("#type").blur();
 				$("#sortNo").attr("value",node.sortNo);
 				$("#sortNo").blur();
 				$("#remark").attr("value",node.remark);		
@@ -225,6 +229,8 @@ var Resource = function(){
 				"name":$("#name").val(),
 				"url": $("#url").val(),
 				"remark": $("#remark").val(),
+				"type": $("#type").val(),
+				"permission": $("#permission").val(),
 				"sortNo" : $("#sortNo").val(),
 				"id":$("#id").val()
 			};	
@@ -238,22 +244,19 @@ var Resource = function(){
 				}		
 				var node = eval("("+result+")");
 				ref.rename_node(sel,node.name)		
-				if(Cl.selected.sortNo != node.sortNo)
-				{
+				if(Cl.selected.sortNo != node.sortNo){
 					//找出根据sortNo，节点应该插入的位置pos
 					var parent = ref.get_node(ref.get_parent(sel));
 					var sons = ref.get_json(parent,{no_children:false,no_state:true});
 					var pos = 0;
-					for(i=0;i<sons.children.length;i++)
-					{
-						if(parseInt(node.sortNo) > parseInt(sons.children[i].li_attr.sortNo))
-						{
+					for(i=0;i<sons.children.length;i++){
+						if(parseInt(node.sortNo) > parseInt(sons.children[i].li_attr.sortNo)){
 							pos = i+1;
 						}
 					}
 					ref.move_node(sel,parent,pos+'');
 				}		
-				Resource.clear();		
+				Resource.clear();
 				alert("修改成功");
 			});	
 		},
@@ -271,9 +274,7 @@ var Resource = function(){
 			}	
 			if(!confirm("确认删除?")) return;	
 			var url = "delete.do";
-			var data={
-				"id":sel.id
-			};
+			var data={"id":sel.id};
 			Cl.ajaxRequest(url,data,function(result){
 				if(!result) return ;
 				result = result.replace(/(^\s*)|(\s*$)/g,'');
@@ -281,8 +282,7 @@ var Resource = function(){
 					//如果父节点是叶子了，给个新样式
 					var parent = ref.get_node(ref.get_parent(sel));
 					var sons = ref.get_json(parent,{no_children:false,no_state:true});
-					if(sons.children.length == 1)
-					{
+					if(sons.children.length == 1){
 						ref.set_icon(parent,"fa fa-briefcase icon-success");
 					}			
 					ref.delete_node(sel);			
@@ -304,9 +304,13 @@ var Resource = function(){
 			$("#name").blur();
 			$("#url").attr("value","");
 			$("#url").blur();
-			$("#remark").val("");
+			$("#permission").attr("value","");
+			$("#permission").blur();
+			$("#type").attr("selected", "selected");
+			$("#type").blur();
 			$("#sortNo").attr("value","");
 			$("#sortNo").blur();
+			$("#remark").val("");
 		}
 	};
 }();

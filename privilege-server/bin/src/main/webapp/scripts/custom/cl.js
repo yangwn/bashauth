@@ -134,7 +134,7 @@ var Cl = function() {
                 }
                 if ($('.wysihtml5').size() > 0) {
                     $('.wysihtml5').wysihtml5({
-                        "stylesheets": ["http://127.0.0.1/privilege_inc/assets/plugins/bootstrap-wysihtml5/wysiwyg-color.css"]
+                        "stylesheets": ["http://dmc-124.sts/privilege_inc/assets/plugins/bootstrap-wysihtml5/wysiwyg-color.css"]
                     });
                 }
             }
