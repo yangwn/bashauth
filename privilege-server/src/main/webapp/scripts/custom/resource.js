@@ -174,6 +174,8 @@ var Resource = function(){
 			var data={
 				"name":$("#name").val(),
 				"url":$("#url").val(),
+				"permission" : $("#permission").val(),
+				"type": $("#type").val(),
 				"moduleFlag":sel.li_attr.flag,
 				"remark": $("#remark").val(),
 				"sortNo" : $("#sortNo").val(),
@@ -298,7 +300,6 @@ var Resource = function(){
 		clear: function(){
 			var validator = $( "#form_cl" ).validate();
 			validator.resetForm();
-			
 			//$("#id").attr("value","");
 			$("#name").attr("value","");
 			$("#name").blur();

@@ -58,15 +58,30 @@ public class ResourceServiceImpl implements IResourceService {
 
 	@Override
 	public Integer createResource(Resource resource, User user) {
-		// 生成structure
-		String structure = "1";
-		Resource parentResource = resourceMapper.selectByPrimaryKey(resource.getParentId());
-		List<Resource> resources = resourceMapper.getResourceListByParentId(resource.getParentId());
-		if (resources == null || resources.size() == 0) {
-			structure = parentResource.getStructure() + "-1";
-		} else {
-			Integer parentLevel = parentResource.getStructure().split("-").length;
 
+		int parentId = 0;
+		String parentStructure = "s";
+
+		if (resource.getParentId() != 0) {
+			Resource parentResource = resourceMapper.selectByPrimaryKey(parentId);
+			parentStructure = parentResource.getStructure();
+			parentId = resource.getParentId();
+		}
+
+		List<Resource> resources = resourceMapper.getResourceListByParentIdAndModuleFlag(parentId,
+				resource.getModuleFlag());
+
+		String structure = getStructureBySameLevelResource(parentStructure, resources);
+		resource.setStructure(structure);
+		setResourceInsert(resource, user);
+
+		return resourceMapper.insertSelective(resource);
+	}
+
+	private String getStructureBySameLevelResource(String parentStructure, List<Resource> resources) {
+		String structure = "1";
+		if (resources != null && resources.size() > 0) {
+			Integer parentLevel = parentStructure.split("-").length;
 			for (Resource r : resources) {
 				String[] structures = r.getStructure().split("-");
 				if (structures.length == parentLevel + 1) {
@@ -77,15 +92,11 @@ public class ResourceServiceImpl implements IResourceService {
 				}
 			}
 			structure = String.valueOf(Integer.parseInt(structure) + 1);
-			structure = parentResource.getStructure() + "-" + structure;
+			structure = parentStructure + "-" + structure;
+		} else {
+			structure = parentStructure + "-1";
 		}
-
-		resource.setStructure(structure);
-
-		setResourceInsert(resource, user);
-
-		return resourceMapper.insertSelective(resource);
-
+		return structure;
 	}
 
 	@Override
@@ -153,7 +164,7 @@ public class ResourceServiceImpl implements IResourceService {
 		}
 		i = 0;
 		for (Resource r : resourceList) {
-			
+
 			int level = r.getStructure().split("-").length;
 			sb.append(",");
 			i++;
